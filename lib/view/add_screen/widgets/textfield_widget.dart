@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 class TextfieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
+  final TextInputType keyboardType;
+
   const TextfieldWidget({
     super.key,
     required this.controller,
     required this.labelText,
+    required this.keyboardType,
   });
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: keyboardType,
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,

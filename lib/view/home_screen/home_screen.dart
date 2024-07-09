@@ -1,117 +1,185 @@
 import 'package:flutter/material.dart';
+import 'package:kailasoft_task/controller/doctor_provider.dart';
+import 'package:kailasoft_task/model/doctor_model.dart';
 import 'package:kailasoft_task/view/add_screen/add_doctor.dart';
-import 'package:kailasoft_task/view/home_screen/widgets/doctorcard_widget.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  String? selectedGender;
-  String? selectedDistrict;
-
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<DoctorProvider>(context, listen: false);
+    provider.fetchDoctor();
+
     return SafeArea(
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Consumer<DoctorProvider>(
+            builder: (context, homeProvider, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Doctors',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          hint: Text(selectedGender ?? 'Gender'),
-                          items: ['Male', 'Female'].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedGender = newValue;
-                            });
-                          },
+                      const Text(
+                        'Doctors',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          hint: Text(selectedDistrict ?? 'District'),
-                          items: [
-                            'Ernakulam',
-                            'Malappuram',
-                            'Kozhikode',
-                            'Kannur'
-                          ].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedDistrict = newValue;
-                            });
-                          },
-                        ),
+                      Row(
+                        children: [
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              hint: Text(homeProvider.selectedFilterGender ??
+                                  'Gender'),
+                              items: ['Male', 'Female', 'Other']
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                homeProvider.filterGender(newValue!);
+                              },
+                              value: homeProvider.selectedFilterGender,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              hint: Text(homeProvider.selectedFilterDistrict ??
+                                  'District'),
+                              items: [
+                                'Ernakulam',
+                                'Malappuram',
+                                'Kozhikode',
+                                'Kannur',
+                              ].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                homeProvider.filterDistrict(newValue!);
+                              },
+                              value: homeProvider.selectedFilterDistrict,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: Consumer<DoctorProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.doctors.isEmpty) {
+                          return const Center(
+                            child: Text('No doctors added'),
+                          );
+                        }
+                        return RefreshIndicator(
+                          onRefresh: provider.fetchDoctor,
+                          child: ListView.builder(
+                            itemCount: provider.doctors.length,
+                            itemBuilder: (context, index) {
+                              final DoctorModel doctor =
+                                  provider.doctors.reversed.toList()[index];
+                              if (provider.selectedFilterGender != null &&
+                                  doctor.gender !=
+                                      provider.selectedFilterGender) {
+                                return const SizedBox.shrink();
+                              }
+                              if (provider.selectedFilterDistrict != null &&
+                                  doctor.district !=
+                                      provider.selectedFilterDistrict) {
+                                return const SizedBox.shrink();
+                              }
+                              return Card(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          doctor.image.toString(),
+                                          width: 80,
+                                          height: 105,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              doctor.name.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              doctor.qualification.toString(),
+                                              style:
+                                                  const TextStyle(fontSize: 8),
+                                            ),
+                                            Text(
+                                              doctor.district.toString(),
+                                              style:
+                                                  const TextStyle(fontSize: 8),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddandEditDoctor(
+                                                    doctor: doctor),
+                                          ));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF019744),
+                                          minimumSize: const Size(50, 30),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Edit Profile',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  )
                 ],
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                  child: ListView(
-                children: const [
-                  DoctorCard(
-                    name: 'Dr.Neeraj Madhav',
-                    qualification: 'BAMS,Resident Medical Officer',
-                    location: 'Ernakulam',
-                    imageUrl:
-                        'https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg',
-                  ),
-                  DoctorCard(
-                    name: 'Dr.Neeraj Madhav',
-                    qualification: 'BAMS,Resident Medical Officer',
-                    location: 'Ernakulam',
-                    imageUrl:
-                        'https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg',
-                  ),
-                  DoctorCard(
-                    name: 'Dr.Neeraj Madhav',
-                    qualification: 'BAMS,Resident Medical Officer',
-                    location: 'Ernakulam',
-                    imageUrl:
-                        'https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg',
-                  ),
-                ],
-              ))
-            ],
+              );
+            },
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -119,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: const CircleBorder(),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AddDoctor(),
+              builder: (context) => const AddandEditDoctor(),
             ));
           },
           child: const Icon(
@@ -128,29 +196,35 @@ class _HomeScreenState extends State<HomeScreen> {
             size: 40,
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_rounded),
-              label: 'Appointment',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.description),
-              label: 'Prescription',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xFF019744),
-          unselectedItemColor: const Color(0xFF98A3B3),
-          onTap: _onItemTapped,
+        bottomNavigationBar: Consumer<DoctorProvider>(
+          builder: (context, doctorProvider, child) {
+            return BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_month_rounded),
+                  label: 'Appointment',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.description),
+                  label: 'Prescription',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+              currentIndex: doctorProvider.selectedIndex,
+              selectedItemColor: const Color(0xFF019744),
+              unselectedItemColor: const Color(0xFF98A3B3),
+              onTap: (index) {
+                doctorProvider.setSelectedIndex(index);
+              },
+            );
+          },
         ),
       ),
     );

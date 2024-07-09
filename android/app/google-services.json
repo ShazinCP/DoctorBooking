@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18411956446",
+    "project_id": "kailasoft-test",
+    "storage_bucket": "kailasoft-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18411956446:android:d5ae9dd2988ec0dee87a4f",
+        "android_client_info": {
+          "package_name": "com.kailatest.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtl4OVpMoMBngKtMb8Fe3PWQaniASZljg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
