@@ -105,4 +105,5 @@ class DoctorProvider extends ChangeNotifier {
     await fetchDoctor();
     notifyListeners();
   }
+  
 }
