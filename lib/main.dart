@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:kailasoft_task/controller/image_provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:kailasoft_task/controller/doctor_provider.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => DoctorProvider(),)
+        ChangeNotifierProvider(create: (context) => DoctorProvider(),),
+        ChangeNotifierProvider(create: (context) => StorageProvider(),),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

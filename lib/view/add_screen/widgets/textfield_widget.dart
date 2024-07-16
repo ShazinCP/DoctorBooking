@@ -4,16 +4,19 @@ class TextfieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final TextInputType keyboardType;
+  final FormFieldValidator? validator;
 
   const TextfieldWidget({
     super.key,
     required this.controller,
     required this.labelText,
     required this.keyboardType,
+    this.validator,
   });
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      validator: validator,
       keyboardType: keyboardType,
       controller: controller,
       decoration: InputDecoration(
@@ -35,4 +38,5 @@ class TextfieldWidget extends StatelessWidget {
       ),
     );
   }
+
 }

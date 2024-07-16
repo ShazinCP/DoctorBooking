@@ -9,14 +9,14 @@ class DoctorModel {
   String? id;
 
   DoctorModel({
-    required this.name,
-    required this.qualification,
-    required this.district,
-    required this.email,
-    required this.phonenumber,
-    required this.gender,
-    required this.image,
-    required this.id,
+    this.name,
+    this.qualification,
+    this.district,
+    this.email,
+    this.phonenumber,
+    this.gender,
+    this.image,
+    this.id,
   });
 
   factory DoctorModel.fromMap(Map<String, dynamic> map, String id) {

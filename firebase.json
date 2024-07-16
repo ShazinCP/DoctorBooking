@@ -1,1 +1,33 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"kailasoft-test","appId":"1:18411956446:android:d5ae9dd2988ec0dee87a4f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"kailasoft-test","configurations":{"android":"1:18411956446:android:d5ae9dd2988ec0dee87a4f","ios":"1:18411956446:ios:37f8687015bdce7fe87a4f","macos":"1:18411956446:ios:37f8687015bdce7fe87a4f","web":"1:18411956446:web:d53f7a0543ef6975e87a4f","windows":"1:18411956446:web:af92b6a2a61db163e87a4f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "kailasoft-test",
+          "appId": "1:18411956446:android:d5ae9dd2988ec0dee87a4f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "kailasoft-test",
+          "configurations": {
+            "android": "1:18411956446:android:d5ae9dd2988ec0dee87a4f",
+            "ios": "1:18411956446:ios:37f8687015bdce7fe87a4f",
+            "macos": "1:18411956446:ios:37f8687015bdce7fe87a4f",
+            "web": "1:18411956446:web:d53f7a0543ef6975e87a4f",
+            "windows": "1:18411956446:web:af92b6a2a61db163e87a4f"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

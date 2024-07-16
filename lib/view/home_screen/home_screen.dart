@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kailasoft_task/controller/doctor_provider.dart';
+import 'package:kailasoft_task/controller/image_provider.dart';
 import 'package:kailasoft_task/model/doctor_model.dart';
 import 'package:kailasoft_task/view/add_screen/add_doctor.dart';
 import 'package:provider/provider.dart';
@@ -24,11 +28,16 @@ class HomeScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Doctors',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () {
+                          homeProvider.fetchDoctor();
+                        },
+                        child: const Text(
+                          'Doctors',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Row(
@@ -78,8 +87,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: Consumer<DoctorProvider>(
-                      builder: (context, provider, child) {
+                    child: Consumer2<DoctorProvider,StorageProvider>(
+                      builder: (context, provider,provider2, child) {
                         if (provider.doctors.isEmpty) {
                           return const Center(
                             child: Text('No doctors added'),
@@ -110,14 +119,18 @@ class HomeScreen extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          doctor.image.toString(),
-                                          width: 80,
-                                          height: 105,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+  borderRadius: BorderRadius.circular(8),
+  child: doctor.image != null && doctor.image!.isNotEmpty
+      ? Image.memory(
+          base64Decode(doctor.image!),
+          width: 80,
+          height: 105,
+          fit: BoxFit.cover,
+        )
+      : const Icon(Icons.person, size: 75),
+),
+
+
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
@@ -152,6 +165,7 @@ class HomeScreen extends StatelessWidget {
                                                 AddandEditDoctor(
                                                     doctor: doctor),
                                           ));
+                                          log('${doctor.image}');
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
